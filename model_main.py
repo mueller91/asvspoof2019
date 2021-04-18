@@ -5,6 +5,9 @@
 import argparse
 import sys
 import os
+
+from tqdm import tqdm
+
 import data_utils
 import numpy as np
 from torch import Tensor
@@ -59,7 +62,7 @@ def produce_evaluation_file(dataset, model, device, save_path):
     sys_id_list = []
     key_list = []
     score_list = []
-    for batch_x, batch_y, batch_meta in data_loader:
+    for batch_x, batch_y, batch_meta in tqdm(data_loader, desc='Doing eval'):
         batch_size = batch_x.size(0)
         num_total += batch_size
         batch_x = batch_x.to(device)
@@ -214,5 +217,7 @@ if __name__ == '__main__':
         writer.add_scalar('loss', running_loss, epoch)
         print('\nepoch: {} - loss: {} - train-acc: {:.2f} - valid-acc: {:.2f}'.format(epoch,
                                                    running_loss, train_accuracy, valid_accuracy))
-        torch.save(model.state_dict(), os.path.join(
-            model_save_path, 'epoch_{}.pth'.format(epoch)))
+        out_to = os.path.join(
+            model_save_path, 'epoch_{}.pth'.format(epoch))
+        torch.save(model.state_dict(), out_to)
+        print(f"Saved to {out_to}")

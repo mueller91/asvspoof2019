@@ -1,21 +1,16 @@
+import os
 import sys
 import numpy as np
 import eval_metrics as em
 import matplotlib.pyplot as plt
 
 # Replace CM scores with your own scores or provide score file as the first argument.
-cm_score_file =  'scores/output.txt' #'scores/cm_dev.txt'
+cm_score_file = '/opt/mueller/nesl_asv/eval_scores.txt'
 # Replace ASV scores with organizers' scores or provide score file as the second argument.
-asv_score_file = 'scores/asv_dev.txt'
+asv_score_file = '/opt/pavelc/datasets/DS/LA/ASVspoof2019_LA_asv_scores/ASVspoof2019.LA.asv.eval.gi.trl.scores.txt'
 
-args = sys.argv
-if len(args) > 1:
-    if len(args) != 3:
-        print('USAGE: python evaluate_tDCF_asvspoof19.py <CM_SCOREFILE> <ASV_SCOREFILE>')
-        exit()
-    else:
-        cm_score_file = args[1]
-        asv_score_file = args[2]
+assert os.path.exists(cm_score_file)
+assert os.path.exists(asv_score_file)
 
 # Fix tandem detection cost function (t-DCF) parameters
 Pspoof = 0.05
