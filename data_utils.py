@@ -11,8 +11,10 @@ from torch.utils.data import DataLoader, Dataset
 import numpy as np
 from joblib import Parallel, delayed
 import h5py
+from tqdm import tqdm
 
-LOGICAL_DATA_ROOT = 'data_logical'
+LOGICAL_DATA_ROOT = '/opt/pavelc/datasets/DS/LA'
+# LOGICAL_DATA_ROOT = 'data_logical'
 PHISYCAL_DATA_ROOT = 'data_physical'
 
 ASVFile = collections.namedtuple('ASVFile',
@@ -56,15 +58,24 @@ class ASVDataset(Dataset):
             'BC':12,
             'CA':13,
             'CB':14,
-            'CC': 15
+            'CC': 15,
+            # LA:
+            'A01': 16,
+            'A02': 17,
+            'A03': 18,
+            'A04': 19,
+            'A05': 20,
+            'A06': 21,
+            'A07': 22,
+            'A08': 23,
+            'A09': 24,
         }
         self.is_eval = is_eval
         self.sysid_dict_inv = {v:k for k,v in self.sysid_dict.items()}
         self.data_root = data_root
         self.dset_name = 'eval' if is_eval else 'train' if is_train else 'dev'
         self.protocols_fname = 'eval_{}.trl'.format(eval_part) if is_eval else 'train.trn' if is_train else 'dev.trl'
-        self.protocols_dir = os.path.join(self.data_root,
-            '{}_protocols/'.format(self.prefix))
+        self.protocols_dir = os.path.join(self.data_root, '{}_cm_protocols/'.format(self.prefix))
         self.files_dir = os.path.join(self.data_root, '{}_{}'.format(
             self.prefix, self.dset_name )+v1_suffix, 'flac')
         self.protocols_fname = os.path.join(self.protocols_dir,
@@ -90,7 +101,7 @@ class ASVDataset(Dataset):
                 print("Matlab cache for cqcc feature do not exist.")
         else:
             self.files_meta = self.parse_protocols_file(self.protocols_fname)
-            data = list(map(self.read_file, self.files_meta))
+            data = list(tqdm(map(self.read_file, self.files_meta), desc=f"Saving to Cache"))
             self.data_x, self.data_y, self.data_sysid = map(list, zip(*data))
             if self.transform:
                 # self.data_x = list(map(self.transform, self.data_x)) 

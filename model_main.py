@@ -212,7 +212,7 @@ if __name__ == '__main__':
         writer.add_scalar('train_accuracy', train_accuracy, epoch)
         writer.add_scalar('valid_accuracy', valid_accuracy, epoch)
         writer.add_scalar('loss', running_loss, epoch)
-        print('\n{} - {} - {:.2f} - {:.2f}'.format(epoch,
+        print('\nepoch: {} - loss: {} - train-acc: {:.2f} - valid-acc: {:.2f}'.format(epoch,
                                                    running_loss, train_accuracy, valid_accuracy))
         torch.save(model.state_dict(), os.path.join(
             model_save_path, 'epoch_{}.pth'.format(epoch)))
